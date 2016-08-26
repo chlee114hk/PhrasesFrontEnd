@@ -40,8 +40,15 @@ var webpackConfig = {
         filename: "main.js",          
     },
     module: {
-        loaders: [
-           // nothing here yet
+        loaders: [ 
+          { 
+            test: /.js$/,
+            loader: 'babel-loader',
+            include: path.join(__dirname, "js"),
+            query: {
+              presets: ['es2015']
+            }     
+          } 
         ]
     },
     resolve: {
@@ -62,7 +69,10 @@ var webpackConfig = {
 // this tells gulp to take the app.js file and send it to Webpack along with the config and put the resulting files in ./build/
 gulp.task("webpack", function() {
   return gulp.src('./src/js/app.js')
-      .pipe(webpack(webpackConfig, webpack) )
+      .pipe(webpack(webpackConfig) )
+      .on('error', function handleError() {
+        this.emit('end'); // Recover from errors
+      })
       .pipe(gulp.dest('./build/'))
 });
 
